@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Resources:
+  ApiGateway:
+    Type: "AWS::ApiGatewayV2::Api"
+    Properties:
+      Name: !Sub "${AWS::StackName}-wss-api"
+      ProtocolType: "WEBSOCKET"
+      RouteSelectionExpression: "\\$default"
