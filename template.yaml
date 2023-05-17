@@ -23,6 +23,26 @@ Resources:
       DeploymentId: !Ref "Deployment"
       ApiId: !Ref "ApiGateway"
 
+  ConnectionsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "Pk"
+          AttributeType: "S"
+        - AttributeName: "Sk"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "Pk"
+          KeyType: "HASH"
+        - AttributeName: "Sk"
+          KeyType: "RANGE"
+      TimeToLiveSpecification:
+        AttributeName: "Ttl"
+        Enabled: true
+      BillingMode: "PAY_PER_REQUEST"
+      SSESpecification:
+        SSEEnabled: true
+
   LambdaRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -64,6 +84,9 @@ Resources:
         - "arm64"
       MemorySize: 512
       CodeUri: "./src/AwsWebsocketDotnetTemplate/"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref "ConnectionsTable"
 
   ConnectFunctionLogGroup:
     Type: "AWS::Logs::LogGroup"
@@ -77,25 +100,25 @@ Resources:
       ApiId: !Ref "ApiGateway"
       RouteKey: "$connect"
       OperationName: "ConnectRoute"
-      Target: !Sub integrations/${ConnectIntegration}
+      Target: !Sub "integrations/${ConnectIntegration}"
 
   ConnectIntegration:
     Type: "AWS::ApiGatewayV2::Integration"
     Properties:
-      ApiId: !Ref ApiGateway
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConnectFunction.Arn}/invocations
+      ApiId: !Ref "ApiGateway"
+      IntegrationType: AWS_"PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConnectFunction.Arn}/invocations"
 
   ConnectInvokePermission:
     Type: "AWS::Lambda::Permission"
     DependsOn:
-      - ApiGateway
+      - "ApiGateway"
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref ConnectFunction
-      Principal: apigateway.amazonaws.com
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "ConnectFunction"
+      Principal: "apigateway.amazonaws.com"
 
 Outputs:
   ApiUrl:
-    Description: Api Gateway endpoint URL
-    Value: !Sub ${ApiGateway.ApiEndpoint}/${Stage}
+    Description: "Api Gateway endpoint URL"
+    Value: !Sub "${ApiGateway.ApiEndpoint}/${Stage}"
