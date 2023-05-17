@@ -3,13 +3,13 @@ using Amazon.Lambda.Core;
 
 namespace AwsWebsocketDotnetTemplate.Tests.Functions;
 
-public class ConnectTests
+public class DisconnectTests
 {
     [Fact]
     public async Task ShouldReturnOkWhenConnectionIdIsPresent()
     {
         var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Connect(mockLogger.Object);
+        var lambda = new Disconnect(mockLogger.Object);
 
         var request = new APIGatewayProxyRequest
         {
@@ -29,7 +29,7 @@ public class ConnectTests
     public async Task ShouldLogConnectionIdWhenSuccessful()
     {
         var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Connect(mockLogger.Object);
+        var lambda = new Disconnect(mockLogger.Object);
 
         var request = new APIGatewayProxyRequest
         {
@@ -41,14 +41,14 @@ public class ConnectTests
 
         await lambda.Handler(request);
 
-        mockLogger.Verify(logger => logger.LogInformation("Connected: 123456"), Times.Once);
+        mockLogger.Verify(logger => logger.LogInformation("Disconnected: 123456"), Times.Once);
     }
 
     [Fact]
     public async Task ShouldNotLogAnyErrorsWhenSuccessful()
     {
         var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Connect(mockLogger.Object);
+        var lambda = new Disconnect(mockLogger.Object);
 
         var request = new APIGatewayProxyRequest
         {
@@ -67,7 +67,7 @@ public class ConnectTests
     public async Task ShouldReturnBadRequestWhenConnectionIdIsEmpty()
     {
         var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Connect(mockLogger.Object);
+        var lambda = new Disconnect(mockLogger.Object);
 
         var request = new APIGatewayProxyRequest
         {
@@ -87,7 +87,7 @@ public class ConnectTests
     public async Task ShouldLogErrorsWhenConnectionIdIsEmpty()
     {
         var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Connect(mockLogger.Object);
+        var lambda = new Disconnect(mockLogger.Object);
 
         var request = new APIGatewayProxyRequest
         {

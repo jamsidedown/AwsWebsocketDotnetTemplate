@@ -1,6 +1,18 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
+Globals:
+  Function:
+    Runtime: "dotnet6"
+    Timeout: 10
+    Architectures:
+      - "arm64"
+    MemorySize: 512
+    CodeUri: "./src/AwsWebsocketDotnetTemplate/"
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE: !Ref "ConnectionsTable"
+
 Resources:
   ApiGateway:
     Type: "AWS::ApiGatewayV2::Api"
@@ -9,18 +21,11 @@ Resources:
       ProtocolType: "WEBSOCKET"
       RouteSelectionExpression: "\\$default"
 
-  Deployment:
-    Type: "AWS::ApiGatewayV2::Deployment"
-    DependsOn:
-      - "ConnectRoute"
-    Properties:
-      ApiId: !Ref "ApiGateway"
-
   Stage:
     Type: "AWS::ApiGatewayV2::Stage"
     Properties:
       StageName: "Prod"
-      DeploymentId: !Ref "Deployment"
+      AutoDeploy: true
       ApiId: !Ref "ApiGateway"
 
   ConnectionsTable:
@@ -78,15 +83,6 @@ Resources:
     Properties:
       Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Connect::Handler"
       Role: !GetAtt "LambdaRole.Arn"
-      Runtime: "dotnet6"
-      Timeout: 10
-      Architectures:
-        - "arm64"
-      MemorySize: 512
-      CodeUri: "./src/AwsWebsocketDotnetTemplate/"
-      Environment:
-        Variables:
-          CONNECTIONS_TABLE: !Ref "ConnectionsTable"
 
   ConnectFunctionLogGroup:
     Type: "AWS::Logs::LogGroup"
@@ -106,7 +102,7 @@ Resources:
     Type: "AWS::ApiGatewayV2::Integration"
     Properties:
       ApiId: !Ref "ApiGateway"
-      IntegrationType: AWS_"PROXY
+      IntegrationType: "AWS_PROXY"
       IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConnectFunction.Arn}/invocations"
 
   ConnectInvokePermission:
@@ -116,6 +112,42 @@ Resources:
     Properties:
       Action: "lambda:InvokeFunction"
       FunctionName: !Ref "ConnectFunction"
+      Principal: "apigateway.amazonaws.com"
+
+  DisconnectFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Disconnect::Handler"
+      Role: !GetAtt "LambdaRole.Arn"
+
+  DisconnectFunctionLogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${DisconnectFunction}"
+      RetentionInDays: 30
+
+  DisconnectRoute:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "ApiGateway"
+      RouteKey: "$disconnect"
+      OperationName: "DisconnectRoute"
+      Target: !Sub "integrations/${DisconnectIntegration}"
+
+  DisconnectIntegration:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref "ApiGateway"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DisconnectFunction.Arn}/invocations"
+
+  DisconnectInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+      - "ApiGateway"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref "DisconnectFunction"
       Principal: "apigateway.amazonaws.com"
 
 Outputs:

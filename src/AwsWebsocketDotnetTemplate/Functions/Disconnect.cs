@@ -4,16 +4,16 @@ using AwsWebsocketDotnetTemplate.Core;
 
 namespace AwsWebsocketDotnetTemplate.Functions;
 
-public class Connect
+public class Disconnect
 {
     private readonly ILambdaLogger _logger;
 
-    public Connect()
+    public Disconnect()
     {
         _logger = new Logger();
     }
 
-    public Connect(ILambdaLogger logger)
+    public Disconnect(ILambdaLogger logger)
     {
         _logger = logger;
     }
@@ -29,7 +29,7 @@ public class Connect
             return ResponseHelpers.BadRequest();
         }
 
-        _logger.LogInformation($"Connected: {connectionId}");
+        _logger.LogInformation($"Disconnected: {connectionId}");
 
         return ResponseHelpers.Ok();
     }
