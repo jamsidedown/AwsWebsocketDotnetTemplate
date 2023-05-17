@@ -1,17 +1,11 @@
+using System.Net;
 using Amazon.Lambda.APIGatewayEvents;
 
 namespace AwsWebsocketDotnetTemplate.Core;
 
-public class ResponseHelpers
+public static class ResponseHelpers
 {
-    public static class StatusCodes
-    {
-        public const int Ok  = 200;
-        public const int BadRequest = 400;
-        public const int InternalError = 500;
-    }
-
-    public static APIGatewayProxyResponse Ok() => new APIGatewayProxyResponse {StatusCode = StatusCodes.Ok};
-    public static APIGatewayProxyResponse BadRequest() => new APIGatewayProxyResponse {StatusCode = StatusCodes.BadRequest};
-    public static APIGatewayProxyResponse InternalError() => new APIGatewayProxyResponse {StatusCode = StatusCodes.InternalError};
+    public static APIGatewayProxyResponse Ok() => new APIGatewayProxyResponse {StatusCode = (int)HttpStatusCode.OK};
+    public static APIGatewayProxyResponse BadRequest() => new APIGatewayProxyResponse {StatusCode = (int)HttpStatusCode.BadRequest};
+    public static APIGatewayProxyResponse InternalError() => new APIGatewayProxyResponse {StatusCode = (int)HttpStatusCode.InternalServerError};
 }

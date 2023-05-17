@@ -2,3 +2,6 @@ bin/
 obj/
 .aws-sam/
 samconfig.toml
+.vscode/
+coverage.json
+TestResults/

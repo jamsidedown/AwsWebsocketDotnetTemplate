@@ -75,6 +75,10 @@ Resources:
               - "logs:CreateLogStream"
               - "logs:PutLogEvents"
             Resource: "*"
+          - Effect: "Allow"
+            Action:
+              - "dynamodb:PutItem"
+            Resource: "*"
       Roles:
         - !Ref "LambdaRole"
 

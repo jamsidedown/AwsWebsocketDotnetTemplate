@@ -1,5 +1,3 @@
-using System.Text.Json;
-using Amazon.Lambda.APIGatewayEvents;
 using AwsWebsocketDotnetTemplate.Core;
 
 namespace AwsWebsocketDotnetTemplate.Functions;

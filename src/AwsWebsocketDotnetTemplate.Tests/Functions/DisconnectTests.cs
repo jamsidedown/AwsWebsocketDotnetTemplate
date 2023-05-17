@@ -5,11 +5,18 @@ namespace AwsWebsocketDotnetTemplate.Tests.Functions;
 
 public class DisconnectTests
 {
+    private Mock<ILambdaLogger> _mockLogger;
+
+    private Disconnect SetupLambda()
+    {
+        _mockLogger = new Mock<ILambdaLogger>();
+        return new Disconnect(_mockLogger.Object);
+    }
+
     [Fact]
     public async Task ShouldReturnOkWhenConnectionIdIsPresent()
     {
-        var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Disconnect(mockLogger.Object);
+        var lambda = SetupLambda();
 
         var request = new APIGatewayProxyRequest
         {
@@ -28,8 +35,7 @@ public class DisconnectTests
     [Fact]
     public async Task ShouldLogConnectionIdWhenSuccessful()
     {
-        var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Disconnect(mockLogger.Object);
+        var lambda = SetupLambda();
 
         var request = new APIGatewayProxyRequest
         {
@@ -41,14 +47,13 @@ public class DisconnectTests
 
         await lambda.Handler(request);
 
-        mockLogger.Verify(logger => logger.LogInformation("Disconnected: 123456"), Times.Once);
+        _mockLogger.Verify(logger => logger.LogInformation("Disconnected: 123456"), Times.Once);
     }
 
     [Fact]
     public async Task ShouldNotLogAnyErrorsWhenSuccessful()
     {
-        var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Disconnect(mockLogger.Object);
+        var lambda = SetupLambda();
 
         var request = new APIGatewayProxyRequest
         {
@@ -60,14 +65,13 @@ public class DisconnectTests
 
         await lambda.Handler(request);
 
-        mockLogger.Verify(logger => logger.LogError(It.IsAny<string>()), Times.Never);
+        _mockLogger.Verify(logger => logger.LogError(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public async Task ShouldReturnBadRequestWhenConnectionIdIsEmpty()
     {
-        var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Disconnect(mockLogger.Object);
+        var lambda = SetupLambda();
 
         var request = new APIGatewayProxyRequest
         {
@@ -86,8 +90,7 @@ public class DisconnectTests
     [Fact]
     public async Task ShouldLogErrorsWhenConnectionIdIsEmpty()
     {
-        var mockLogger = new Mock<ILambdaLogger>();
-        var lambda = new Disconnect(mockLogger.Object);
+        var lambda = SetupLambda();
 
         var request = new APIGatewayProxyRequest
         {
@@ -99,7 +102,7 @@ public class DisconnectTests
 
         await lambda.Handler(request);
 
-        mockLogger.Verify(logger => logger.LogError(It.IsAny<string>()), Times.AtLeast(2));
-        mockLogger.Verify(logger => logger.LogError("Empty connection id"), Times.Once);
+        _mockLogger.Verify(logger => logger.LogError(It.IsAny<string>()), Times.AtLeast(2));
+        _mockLogger.Verify(logger => logger.LogError("Empty connection id"), Times.Once);
     }
 }

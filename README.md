@@ -39,7 +39,36 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 Starting test execution, please wait...
 A total of 1 test files matched the specified pattern.
 
-Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: < 1 ms - AwsWebsocketDotnetTemplate.Tests.dll (net6.0)
+Passed!  - Failed:     0, Passed:    13, Skipped:     0, Total:    13, Duration: 18 ms - AwsWebsocketDotnetTemplate.Tests.dll (net6.0)
+```
+
+### Test coverage
+From the `src` directory, running `./coverage.sh` will run the unit tests and show a coverage report
+
+```sh
+$ ./coverage.sh
+Test run for ./AwsWebsocketDotnetTemplate.Tests/bin/Debug/net6.0/AwsWebsocketDotnetTemplate.Tests.dll (.NETCoreApp,Version=v6.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.5.0 (arm64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+Passed!  - Failed:     0, Passed:    13, Skipped:     0, Total:    13, Duration: 17 ms - AwsWebsocketDotnetTemplate.Tests.dll (net6.0)
+
+Calculating coverage result...
+  Generating report './coverage.json'
++----------------------------+--------+--------+--------+
+| Module                     | Line   | Branch | Method |
++----------------------------+--------+--------+--------+
+| AwsWebsocketDotnetTemplate | 86.58% | 100%   | 80.95% |
++----------------------------+--------+--------+--------+
+
++---------+--------+--------+--------+
+|         | Line   | Branch | Method |
++---------+--------+--------+--------+
+| Total   | 86.58% | 100%   | 80.95% |
++---------+--------+--------+--------+
+| Average | 86.58% | 100%   | 80.95% |
++---------+--------+--------+--------+
 ```
 
 ## Building and deploying
