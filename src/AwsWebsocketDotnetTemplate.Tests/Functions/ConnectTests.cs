@@ -17,22 +17,26 @@ public class ConnectTests
         _mockDynamo = new Mock<IAmazonDynamoDB>();
         return new Connect(_mockLogger.Object, _mockDynamo.Object);
     }
+    
+    private APIGatewayProxyRequest GetRequest(string connectionId) =>
+        new()
+        {
+            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext {ConnectionId = connectionId}
+        };
 
     [Fact]
     public async Task ShouldReturnOkWhenConnectionIdIsPresent()
     {
         var lambda = SetupLambda();
 
-        var dynamoResponse = new PutItemResponse {HttpStatusCode = HttpStatusCode.OK};
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ReturnsAsync(dynamoResponse);
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["ConnectionId"].S == "123456"),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PutItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         var response = await lambda.Handler(request);
 
@@ -45,16 +49,14 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        var dynamoResponse = new PutItemResponse {HttpStatusCode = HttpStatusCode.OK};
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ReturnsAsync(dynamoResponse);
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["ConnectionId"].S == "123456"),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PutItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         await lambda.Handler(request);
 
@@ -66,16 +68,14 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        var dynamoResponse = new PutItemResponse {HttpStatusCode = HttpStatusCode.OK};
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ReturnsAsync(dynamoResponse);
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, AttributeValue>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PutItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         await lambda.Handler(request);
 
@@ -87,13 +87,7 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = string.Empty
-            }
-        };
+        var request = GetRequest(string.Empty);
 
         var response = await lambda.Handler(request);
 
@@ -106,13 +100,7 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = string.Empty
-            }
-        };
+        var request = GetRequest(string.Empty);
 
         await lambda.Handler(request);
 
@@ -126,19 +114,22 @@ public class ConnectTests
         var lambda = SetupLambda();
 
         var dynamoResponse = new PutItemResponse {HttpStatusCode = HttpStatusCode.OK};
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ReturnsAsync(dynamoResponse);
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["ConnectionId"].S == "123456"),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(dynamoResponse);
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
-        var response = await lambda.Handler(request);
+        await lambda.Handler(request);
 
-        _mockDynamo.Verify(m => m.PutItemAsync(It.IsAny<string>(), It.Is<Dictionary<string, AttributeValue>>(d => d["ConnectionId"].S == "123456"), It.IsAny<CancellationToken>()), Times.Once);
+        _mockDynamo
+            .Verify(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.Is<Dictionary<string, AttributeValue>>(d => d["ConnectionId"].S == "123456"),
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -146,16 +137,14 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        var dynamoResponse = new PutItemResponse {HttpStatusCode = HttpStatusCode.BadRequest};
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ReturnsAsync(dynamoResponse);
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, AttributeValue>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PutItemResponse {HttpStatusCode = HttpStatusCode.BadRequest});
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         var response = await lambda.Handler(request);
 
@@ -168,15 +157,14 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, AttributeValue>>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception());
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         var response = await lambda.Handler(request);
 
@@ -189,15 +177,14 @@ public class ConnectTests
     {
         var lambda = SetupLambda();
 
-        _mockDynamo.Setup(m => m.PutItemAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, AttributeValue>>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+        _mockDynamo
+            .Setup(m => m.PutItemAsync(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, AttributeValue>>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception());
 
-        var request = new APIGatewayProxyRequest
-        {
-            RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
-            {
-                ConnectionId = "123456"
-            }
-        };
+        var request = GetRequest("123456");
 
         await lambda.Handler(request);
 

@@ -18,13 +18,24 @@ public class ConnectionModel
         var connectionId = ConnectionId.ToAttribute();
         var ttl = ConnectedAt.AddDays(1).ToUnixTime();
 
-        return new()
+        return new Dictionary<string, AttributeValue>
         {
             {"Pk", connectionId},
             {"Sk", connectionId},
             {"ConnectionId", connectionId},
             {"ConnectedAt", ConnectedAt.ToAttribute()},
             {"Ttl", ttl.ToAttribute()}
+        };
+    }
+
+    public static Dictionary<string, AttributeValue> Key(string connectionId)
+    {
+        var attribute = connectionId.ToAttribute();
+
+        return new Dictionary<string, AttributeValue>
+        {
+            {"Pk", attribute},
+            {"Sk", attribute},
         };
     }
 }

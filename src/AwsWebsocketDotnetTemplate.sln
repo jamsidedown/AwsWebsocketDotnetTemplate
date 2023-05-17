@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwsWebsocketDotnetTemplate"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwsWebsocketDotnetTemplate.Tests", "AwsWebsocketDotnetTemplate.Tests\AwsWebsocketDotnetTemplate.Tests.csproj", "{60AA0C42-D9A8-4E4B-A9A7-FEE0E379E1B1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{78F42E3E-F0F8-4B93-AAB6-C2BE2779B5D9}"
+	ProjectSection(SolutionItems) = preProject
+		..\template.yaml = ..\template.yaml
+		..\README.md = ..\README.md
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

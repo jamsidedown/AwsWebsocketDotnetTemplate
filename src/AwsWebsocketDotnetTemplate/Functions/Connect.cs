@@ -46,7 +46,7 @@ public class Connect
         return ResponseHelpers.Ok();
     }
 
-    public async Task<bool> StoreConnection(ConnectionModel connection)
+    private async Task<bool> StoreConnection(ConnectionModel connection)
     {
         try
         {

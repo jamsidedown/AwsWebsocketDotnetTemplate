@@ -5,3 +5,5 @@ samconfig.toml
 .vscode/
 coverage.json
 TestResults/
+.idea/
+*.DotSettings.user
