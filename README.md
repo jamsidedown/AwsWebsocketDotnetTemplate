@@ -54,6 +54,7 @@ sam build
 # then deploy to AWS
 # the stack name can be replaced with whatever you choose
 sam deploy --stack-name MyWebsocketApi --capabilities CAPABILITY_NAMED_IAM --guided
+# leave all guided values as default
 ```
 
 After the initial deploy, updates to the stack are simpler

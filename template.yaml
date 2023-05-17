@@ -8,3 +8,94 @@ Resources:
       Name: !Sub "${AWS::StackName}-wss-api"
       ProtocolType: "WEBSOCKET"
       RouteSelectionExpression: "\\$default"
+
+  Deployment:
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DependsOn:
+      - "ConnectRoute"
+    Properties:
+      ApiId: !Ref "ApiGateway"
+
+  Stage:
+    Type: "AWS::ApiGatewayV2::Stage"
+    Properties:
+      StageName: "Prod"
+      DeploymentId: !Ref "Deployment"
+      ApiId: !Ref "ApiGateway"
+
+  LambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-lambda-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  LambdaPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-lambda-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: "*"
+      Roles:
+        - !Ref "LambdaRole"
+
+  ConnectFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Connect::Handler"
+      Role: !GetAtt "LambdaRole.Arn"
+      Runtime: "dotnet6"
+      Timeout: 10
+      Architectures:
+        - "arm64"
+      MemorySize: 512
+      CodeUri: "./src/AwsWebsocketDotnetTemplate/"
+
+  ConnectFunctionLogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${ConnectFunction}"
+      RetentionInDays: 30
+
+  ConnectRoute:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref "ApiGateway"
+      RouteKey: "$connect"
+      OperationName: "ConnectRoute"
+      Target: !Sub integrations/${ConnectIntegration}
+
+  ConnectIntegration:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref ApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConnectFunction.Arn}/invocations
+
+  ConnectInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+      - ApiGateway
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ConnectFunction
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  ApiUrl:
+    Description: Api Gateway endpoint URL
+    Value: !Sub ${ApiGateway.ApiEndpoint}/${Stage}
