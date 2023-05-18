@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
+Parameters:
+  ProjectNamespace:
+    Type: "String"
+    Default: "AwsWebsocketDotnetTemplate"
+
 Globals:
   Function:
     Runtime: "dotnet6"
@@ -8,7 +13,7 @@ Globals:
     Architectures:
       - "arm64"
     MemorySize: 512
-    CodeUri: "./src/AwsWebsocketDotnetTemplate/"
+    CodeUri: !Sub "./src/${ProjectNamespace}/"
     Environment:
       Variables:
         CONNECTIONS_TABLE: !Ref "ConnectionsTable"
@@ -91,7 +96,7 @@ Resources:
   ConnectFunction:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Connect::Handler"
+      Handler: !Sub "${ProjectNamespace}::${ProjectNamespace}.Functions.Connect::Handler"
       Role: !GetAtt "LambdaRole.Arn"
 
   ConnectFunctionLogGroup:
@@ -127,7 +132,7 @@ Resources:
   DisconnectFunction:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Disconnect::Handler"
+      Handler: !Sub "${ProjectNamespace}::${ProjectNamespace}.Functions.Disconnect::Handler"
       Role: !GetAtt "LambdaRole.Arn"
 
   DisconnectFunctionLogGroup:
@@ -163,7 +168,7 @@ Resources:
   DefaultFunction:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: "AwsWebsocketDotnetTemplate::AwsWebsocketDotnetTemplate.Functions.Default::Handler"
+      Handler: !Sub "${ProjectNamespace}::${ProjectNamespace}.Functions.Default::Handler"
       Role: !GetAtt "LambdaRole.Arn"
 
   DefaultFunctionLogGroup:

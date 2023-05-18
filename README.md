@@ -54,6 +54,9 @@ dotnet build
 ### Using this repository as a template
 Click the `Use this template` dropdown on the repositories and select `Create a new repository`, alternatively you can navigate straight [here](https://github.com/jamsidedown/AwsWebsocketDotnetTemplate/generate) to create a new repo from this template.
 
+### Changing the project name
+After changing the project name/namespace in the source directory, change the `ProjectNamespace` variable inside `template.yaml` to allow the build process to find the renamed functions.
+
 ## Running the tests
 From the `src` directory, running `dotnet test` will run all unit tests
 
