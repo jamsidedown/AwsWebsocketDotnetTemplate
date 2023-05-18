@@ -28,7 +28,7 @@ public class DisconnectTests
     public async Task ShouldReturnOkWhenConnectionIdIsPresent()
     {
         var lambda = SetupLambda();
-        
+
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
@@ -48,14 +48,14 @@ public class DisconnectTests
     public async Task ShouldLogConnectionIdWhenSuccessful()
     {
         var lambda = SetupLambda();
-        
+
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, AttributeValue>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DeleteItemResponse {HttpStatusCode = HttpStatusCode.OK});
-        
+
         var request = GetRequest("123456");
 
         await lambda.Handler(request);
@@ -67,14 +67,14 @@ public class DisconnectTests
     public async Task ShouldNotLogAnyErrorsWhenSuccessful()
     {
         var lambda = SetupLambda();
-        
+
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
                 It.IsAny<Dictionary<string, AttributeValue>>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DeleteItemResponse {HttpStatusCode = HttpStatusCode.OK});
-        
+
         var request = GetRequest("123456");
 
         await lambda.Handler(request);
@@ -118,9 +118,9 @@ public class DisconnectTests
     public async Task ShouldDeleteFromDynamoOnDisconnect()
     {
         var lambda = SetupLambda();
-        
+
         var request = GetRequest("123456");
-        
+
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
@@ -129,14 +129,14 @@ public class DisconnectTests
             .ReturnsAsync(new DeleteItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
         await lambda.Handler(request);
-        
+
         _mockDynamo
             .Verify(db => db.DeleteItemAsync(
                 It.IsAny<string>(),
                 It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "123456"),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
-    
+
     [Fact]
     public async Task ShouldReturnErrorWhenDynamoFails()
     {

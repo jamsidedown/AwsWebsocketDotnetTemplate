@@ -17,7 +17,7 @@ public class ConnectTests
         _mockDynamo = new Mock<IAmazonDynamoDB>();
         return new Connect(_mockLogger.Object, _mockDynamo.Object);
     }
-    
+
     private APIGatewayProxyRequest GetRequest(string connectionId) =>
         new()
         {
