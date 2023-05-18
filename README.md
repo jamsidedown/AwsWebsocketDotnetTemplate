@@ -13,6 +13,11 @@ Template for an AWS hosted websocket service using dotnet
 - AWS SAM CLI ([Installer](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html))
 - Dotnet SDK 6+ ([Installer](https://dotnet.microsoft.com/en-us/download))
 
+### Optional additional tools
+- Coverlet console ([Install instructions](https://github.com/coverlet-coverage/coverlet#installation-2))
+  - Install with `-a arm64` if installing on a machine with an ARM processor (e.g. Macbook with an M1 or M2 processor)
+- cfn-lint ([Install instructions](https://github.com/aws-cloudformation/cfn-lint#install))
+
 ## Architecture
 ![architecture diagram](docs/WebsocketAPI.drawio.svg)
 
@@ -69,6 +74,8 @@ Passed!  - Failed:     0, Passed:    13, Skipped:     0, Total:    13, Duration:
 ```
 
 ### Test coverage
+Coverage is run with coverlet console, installation instructions are included in the `Optional additional tools` section above.
+
 From the `src` directory, running `./coverage.sh` will run the unit tests and show a coverage report
 
 ```sh
@@ -96,6 +103,12 @@ Calculating coverage result...
 | Average | 86.58% | 100%   | 80.95% |
 +---------+--------+--------+--------+
 ```
+
+### Cloudformation template linting
+From the root directory, running `cfn-lint template.yaml` will run check the cloudformation template to ensure it can be parsed correctly.
+
+If `cfn-lint` prints any output, then those issues will need to be fixed for the build and deploy to succeed.
+No output means the template has correct syntax, but doesn't guarantee the build and deploy will succeed.
 
 ## Building and deploying
 From the root directory, the SAM CLI can be used to build and deploy to AWS.
