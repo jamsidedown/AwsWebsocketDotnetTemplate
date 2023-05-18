@@ -23,6 +23,32 @@ Template for an AWS hosted websocket service using dotnet
 - When the user disconnects, the Disconnect Lambda runs to remove the user from DynamoDB
 - A time to live (TTL) is configured in DynamoDB to clean up any connections that may have closed without triggering the Disconnect Lambda
 
+### Database
+![database diagram](docs/ConnectionsTable.png)
+
+Storing the connection id, the time of connection, and a time to live (ttl) so that any websocket connections that fail to get deleted get cleaned up the next day (or later)
+
+Using a composite key, so that more data can be stored in this table in the future (e.g. channel subscriptions, messages etc.)
+
+## Getting the code
+Either clone directly from this repository to try building/deploying, or use this repo as a template for your own websocket project.
+
+### Cloning this repository
+In a terminal
+```sh
+git clone https://github.com/jamsidedown/AwsWebsocketDotnetTemplate.git
+
+# change to src directory
+cd src
+
+# restore and build code
+dotnet restore
+dotnet build
+```
+
+### Using this repository as a template
+Click the `Use this template` dropdown on the repositories and select `Create a new repository`, alternatively you can navigate straight [here](https://github.com/jamsidedown/AwsWebsocketDotnetTemplate/generate) to create a new repo from this template.
+
 ## Running the tests
 From the `src` directory, running `dotnet test` will run all unit tests
 

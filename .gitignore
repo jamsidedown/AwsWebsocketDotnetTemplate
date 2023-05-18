@@ -1,9 +1,10 @@
 bin/
 obj/
 .aws-sam/
-samconfig.toml
 .vscode/
-coverage.json
 TestResults/
 .idea/
+samconfig.toml
+coverage.json
 *.DotSettings.user
+.DS_Store

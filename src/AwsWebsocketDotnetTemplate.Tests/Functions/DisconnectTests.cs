@@ -32,7 +32,7 @@ public class DisconnectTests
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
-                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "123456"),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "CONN#123456"),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DeleteItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
@@ -124,7 +124,7 @@ public class DisconnectTests
         _mockDynamo
             .Setup(m => m.DeleteItemAsync(
                 It.IsAny<string>(),
-                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "123456"),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "CONN#123456"),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(new DeleteItemResponse {HttpStatusCode = HttpStatusCode.OK});
 
@@ -133,7 +133,7 @@ public class DisconnectTests
         _mockDynamo
             .Verify(db => db.DeleteItemAsync(
                 It.IsAny<string>(),
-                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "123456"),
+                It.Is<Dictionary<string, AttributeValue>>(x => x["Pk"].S == "CONN#123456"),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 

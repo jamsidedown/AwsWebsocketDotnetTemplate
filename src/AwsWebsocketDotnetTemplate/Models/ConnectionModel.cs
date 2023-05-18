@@ -15,14 +15,15 @@ public class ConnectionModel
 
     public Dictionary<string, AttributeValue> ToDynamo()
     {
+        var key = $"CONN#{ConnectionId}".ToAttribute();
         var connectionId = ConnectionId.ToAttribute();
         var ttl = ConnectedAt.AddDays(1).ToUnixTime();
 
         return new Dictionary<string, AttributeValue>
         {
-            {"Pk", connectionId},
-            {"Sk", connectionId},
-            {"ConnectionId", connectionId},
+            {"Pk", key},
+            {"Sk", key},
+            {"ConnectionId", ConnectionId.ToAttribute()},
             {"ConnectedAt", ConnectedAt.ToAttribute()},
             {"Ttl", ttl.ToAttribute()}
         };
@@ -30,7 +31,7 @@ public class ConnectionModel
 
     public static Dictionary<string, AttributeValue> Key(string connectionId)
     {
-        var attribute = connectionId.ToAttribute();
+        var attribute = $"CONN#{connectionId}".ToAttribute();
 
         return new Dictionary<string, AttributeValue>
         {
