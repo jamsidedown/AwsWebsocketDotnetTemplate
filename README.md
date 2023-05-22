@@ -17,6 +17,7 @@ Template for an AWS hosted websocket service using dotnet
 - Coverlet console ([Install instructions](https://github.com/coverlet-coverage/coverlet#installation-2))
   - Install with `-a arm64` if installing on a machine with an ARM processor (e.g. Macbook with an M1 or M2 processor)
 - cfn-lint ([Install instructions](https://github.com/aws-cloudformation/cfn-lint#install))
+- wscat ([Install instructions](https://github.com/websockets/wscat#installation))
 
 ## Architecture
 ![architecture diagram](docs/WebsocketAPI.drawio.svg)
@@ -131,4 +132,29 @@ sam deploy --stack-name MyWebsocketApi --capabilities CAPABILITY_NAMED_IAM --gui
 After the initial deploy, updates to the stack are simpler
 ```sh
 sam build && sam deploy
+```
+
+### Testing the deployed API
+Once the `sam deploy` command has finished running, the websocket url will be shown at the end of the output.
+
+```sh
+CloudFormation outputs from deployed stack
+----------------------------------------------------------------------------------------------------------------------------
+Outputs                                                                                                                    
+----------------------------------------------------------------------------------------------------------------------------
+Key                 ApiUrl                                                                                                 
+Description         Api Gateway endpoint URL                                                                               
+Value               wss://abdefghijk.execute-api.eu-west-2.amazonaws.com/Prod                                              
+----------------------------------------------------------------------------------------------------------------------------
+
+
+Successfully created/updated stack - MyWebsocketApi in eu-west-2
+```
+
+This url can then be connected to using `wscat`. Anything sent to this API will be parroted back to the user.
+```sh
+$ wscat -c "wss://abdefghijk.execute-api.eu-west-2.amazonaws.com/"
+Connected (press CTRL+C to quit)
+> Hello, world!
+< Hello, world!
 ```
