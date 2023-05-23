@@ -19,10 +19,33 @@ Template for an AWS hosted websocket service using dotnet
 - cfn-lint ([Install instructions](https://github.com/aws-cloudformation/cfn-lint#install))
 - wscat ([Install instructions](https://github.com/websockets/wscat#installation))
 
+```sh
+$ aws --version
+aws-cli/2.11.20 Python/3.11.3 Darwin/22.4.0 exe/x86_64 prompt/off
+
+$ sam --version
+SAM CLI, version 1.84.0
+
+$ dotnet --version
+7.0.203
+
+$ coverlet --version
+Cross platform .NET Core code coverage tool
+3.2.0.0
+
+$ cfn-lint --version
+cfn-lint 0.77.5
+
+$ wscat --version
+5.2.0
+```
+
 ## Architecture
 ![architecture diagram](docs/WebsocketAPI.drawio.svg)
 
 - User connects to API Gateway via websockets (wss)
+  - API Gateway has been provisionally configured to throttle requests to 100 requests per second with a burst of 50 requests
+  - The burst limit is effectively a bucket of available request tokens with a capacity of 50 getting 100 new tokens per second (AFAIK)
 - API Gateway invokes Connect Lambda to store the user's unique connection id to DynamoDB
 - When the user sends a message through the wss connection, the Default Lambda is invoked to handle the message
     - For now the Default Lambda will parrot the user's message back to the user

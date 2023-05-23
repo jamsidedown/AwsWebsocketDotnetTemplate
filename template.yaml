@@ -33,6 +33,9 @@ Resources:
       StageName: "Prod"
       AutoDeploy: true
       ApiId: !Ref "ApiGateway"
+      DefaultRouteSettings:
+        ThrottlingRateLimit: 100
+        ThrottlingBurstLimit: 50
 
   ConnectionsTable:
     Type: "AWS::DynamoDB::Table"
