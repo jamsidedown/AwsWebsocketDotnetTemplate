@@ -1,6 +1,8 @@
 # AwsWebsocketDotnetTemplate
 Template for an AWS hosted websocket service using dotnet
 
+Accompanying blog post can be found [here](https://robanderson.dev/blog/websocket-api)
+
 ## AWS services used
 - CloudFormation
 - Api Gateway
